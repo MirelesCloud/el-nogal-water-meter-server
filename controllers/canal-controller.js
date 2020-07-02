@@ -78,49 +78,65 @@ updateMeter = async (req, res) => {
     })
 }
 
-deleteMeter = async (req, res) => {
-    await Meter.findOneAndDelete({ _id: req.params.id }, (err, meter) => {
-        if (err) {
-            return res.status(400).json({ success: false, error: err })
-        }
+deleteMeter = async (req, res, next) => {
+    try {
+        await Meter.findOneAndDelete({ _id: req.params.id }, (err, meter) => {
+            if (err) {
+                return res.status(400).json({ success: false, error: err })
+            }
+    
+            if (!meter) {
+                return res
+                    .status(404)
+                    .json({ success: false, error: `Meter not found` })
+            }
+    
+            return res.status(200).json({ success: true, data: meter })
+        })
 
-        if (!meter) {
-            return res
-                .status(404)
-                .json({ success: false, error: `Meter not found` })
-        }
-
-        return res.status(200).json({ success: true, data: meter })
-    }).catch(err => console.log(err))
+    }
+    catch(error) {
+        next(error)
+    }
 }
 
-getMeterById = async (req, res) => {
-    await Meter.findOne({ _id: req.params.id }, (err, meter) => {
-        if (err) {
-            return res.status(400).json({ success: false, error: err })
-        }
-
-        if (!meter) {
-            return res
-                .status(404)
-                .json({ success: false, error: `Meter not found` })
-        }
-        return res.status(200).json({ success: true, data: meter })
-    }).catch(err => console.log(err))
+getMeterById = async (req, res, next) => {
+    try {
+        await Meter.findOne({ _id: req.params.id }, (err, meter) => {
+            if (err) {
+                return res.status(400).json({ success: false, error: err })
+            }
+    
+            if (!meter) {
+                return res
+                    .status(404)
+                    .json({ success: false, error: `Meter not found` })
+            }
+            return res.status(200).json({ success: true, data: meter })
+        })
+    }
+    catch(error) {
+        next(error)
+    }
 }
 
-getMeters = async (req, res) => {
-    await Meter.find({}, (err, meters) => {
-        if (err) {
-            return res.status(400).json({ success: false, error: err })
-        }
-        if (!meters.length) {
-            return res
-                .status(404)
-                .json({ success: false, error: `Meter not found` })
-        }
-        return res.status(200).json({ success: true, data: meters })
-    }).catch(err => console.log(err))
+getMeters = async (req, res, next) => {
+    try {
+        await Meter.find({}, (err, meters) => {
+            if (err) {
+                return res.status(400).json({ success: false, error: err })
+            }
+            if (!meters.length) {
+                return res
+                    .status(404)
+                    .json({ success: false, error: `Meter not found` })
+            }
+            return res.status(200).json({ success: true, data: meters })
+        })
+    }
+   catch(error) {
+       next(error)
+   }
 }
 
 module.exports = {
